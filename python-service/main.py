@@ -16,6 +16,7 @@ from models import (
 )
 from database import db
 from rosbag_parser import ROS2BagParser
+import zipfile
 
 app = FastAPI(title="ROS2 Bag Processor API", version="1.0.0")
 
@@ -102,10 +103,18 @@ async def upload_bag(
             shutil.copyfileobj(file.file, buffer)
         
         file_size = upload_path.stat().st_size
-        
-        # For now, assume the uploaded file is the bag directory
-        # In production, you might want to handle zip files and extract them
-        bag_path = temp_dir
+
+        if upload_path.suffix == '.zip':
+            extract_dir = temp_dir / upload_path.stem
+            with zipfile.ZipFile(upload_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_dir)
+            
+            bag_candidates = list(extract_dir.glob('*.db3'))
+            if not bag_candidates:
+                raise HTTPException(status_code=400, detail="No .db3 files found in zip file")
+            bag_path = bag_candidates[0].parent
+        else:
+            bag_path = temp_dir
         
         # Get basic metadata (without processing yet)
         try:
@@ -118,6 +127,9 @@ async def upload_bag(
                 status_code=400, 
                 detail=f"Invalid bag file: {str(e)}"
             )
+
+        if upload_path.suffix == '.zip' and upload_path.exists():
+            upload_path.unlink()
         
         # Create database entry
         bag_id = db.create_bag(

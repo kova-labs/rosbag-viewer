@@ -64,8 +64,8 @@ export function BagUploadDialog({ open, onOpenChange }: BagUploadDialogProps) {
         if (acceptedFiles.length > 0) {
             const selectedFile = acceptedFiles[0];
             // Validate file extension
-            if (!selectedFile.name.endsWith('.db3') && !selectedFile.name.endsWith('.bag')) {
-                toast.error('Please upload a valid ROS bag file (.db3 or .bag)');
+            if (!selectedFile.name.endsWith('.zip')) {
+                toast.error('Please upload a valid ROS bag (.zip)');
                 return;
             }
             setFile(selectedFile);
@@ -76,7 +76,7 @@ export function BagUploadDialog({ open, onOpenChange }: BagUploadDialogProps) {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: {
-            'application/octet-stream': ['.db3', '.bag'],
+            'application/zip': ['.zip'],
         },
         maxFiles: 1,
         disabled: isUploading,
@@ -187,7 +187,7 @@ export function BagUploadDialog({ open, onOpenChange }: BagUploadDialogProps) {
                                     : 'Drag & drop a bag file here, or click to select'}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                                Supports .db3 and .bag files
+                                Supports .zip files containing ros bags
                             </p>
                         </div>
                     ) : (
