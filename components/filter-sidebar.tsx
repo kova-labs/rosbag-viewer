@@ -23,6 +23,7 @@ interface FilterSidebarProps {
     isMobile?: boolean;
     isOpen?: boolean;
     onOpenChange?: (open: boolean) => void;
+    hideMobileButton?: boolean;
 }
 
 export function FilterSidebar({
@@ -32,6 +33,7 @@ export function FilterSidebar({
     isMobile = false,
     isOpen = false,
     onOpenChange,
+    hideMobileButton = false,
 }: FilterSidebarProps) {
     const [tagsByCategory, setTagsByCategory] = useState<TagsByCategoryWithCounts[]>([]);
     const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
@@ -193,18 +195,20 @@ export function FilterSidebar({
         return (
             <>
                 {/* Mobile Toggle Button */}
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onOpenChange?.(!isOpen)}
-                    className="lg:hidden"
-                >
-                    <Filter className="mr-2 h-4 w-4" />
-                    Filters
-                    {hasActiveFilters && (
-                        <span className="ml-2 h-2 w-2 rounded-full bg-primary" />
-                    )}
-                </Button>
+                {!hideMobileButton && (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onOpenChange?.(!isOpen)}
+                        className="lg:hidden"
+                    >
+                        <Filter className="mr-2 h-4 w-4" />
+                        Filters
+                        {hasActiveFilters && (
+                            <span className="ml-2 h-2 w-2 rounded-full bg-primary" />
+                        )}
+                    </Button>
+                )}
 
                 {/* Mobile Drawer */}
                 {isOpen && (
