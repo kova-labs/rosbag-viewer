@@ -142,7 +142,7 @@ export function BagCard({ bag, className }: BagCardProps) {
                         <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
                             <span>
-                                {format(startDate, 'MMM d, yyyy')} •{' '}
+                                {format(startDate, 'MMM d, yyyy')} -{' '}
                                 {formatDistanceToNow(startDate, { addSuffix: true })}
                             </span>
                         </div>

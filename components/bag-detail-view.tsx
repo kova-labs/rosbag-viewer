@@ -87,7 +87,7 @@ export function BagDetailView({ bag }: BagDetailViewProps) {
                             <div className="flex items-center gap-2">
                                 <Calendar className="h-4 w-4" />
                                 <span>
-                                    {format(startDate, 'MMM d, yyyy')} •{' '}
+                                    {format(startDate, 'MMM d, yyyy')} -{' '}
                                     {formatDistanceToNow(startDate, { addSuffix: true })}
                                 </span>
                             </div>
@@ -111,10 +111,10 @@ export function BagDetailView({ bag }: BagDetailViewProps) {
                                     style={
                                         tag.color
                                             ? {
-                                                  borderColor: tag.color,
-                                                  color: tag.color,
-                                                  backgroundColor: `${tag.color}15`,
-                                              }
+                                                borderColor: tag.color,
+                                                color: tag.color,
+                                                backgroundColor: `${tag.color}15`,
+                                            }
                                             : undefined
                                     }
                                 >

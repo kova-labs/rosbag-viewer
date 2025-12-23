@@ -76,7 +76,7 @@ async def root():
     return {"status": "ok", "service": "ROS2 Bag Processor"}
 
 
-@app.post("/upload", response_model=UploadResponse)
+@app.post("/api/bags/upload", response_model=UploadResponse)
 async def upload_bag(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
@@ -162,7 +162,7 @@ async def upload_bag(
         raise HTTPException(status_code=500, detail=error_msg)
 
 
-@app.get("/status/{bag_id}", response_model=ProcessingStatus)
+@app.get("/api/bags/status/{bag_id}", response_model=ProcessingStatus)
 async def get_processing_status(bag_id: int):
     """Get the processing status of a bag"""
     
@@ -193,7 +193,7 @@ async def get_processing_status(bag_id: int):
     )
 
 
-@app.delete("/cancel/{bag_id}")
+@app.post("/api/bags/{bag_id}/cancel")
 async def cancel_processing(bag_id: int):
     """Cancel processing of a bag (if still in progress)"""
     
@@ -214,7 +214,7 @@ async def cancel_processing(bag_id: int):
     return {"message": "Processing cancelled"}
 
 
-@app.post("/tags", response_model=Dict)
+@app.post("/api/bags/tags", response_model=Dict)
 async def create_tag(tag: TagCreate):
     """Create a new tag (called from Next.js if needed)"""
     try:
