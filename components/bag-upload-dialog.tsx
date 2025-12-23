@@ -24,6 +24,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { uploadBag } from '@/lib/python-client';
 import { getAllTags, type TagsByCategory } from '@/app/actions/tags';
+import { assignTagsToBag } from '@/app/actions/bags';
 import { cn } from '@/lib/utils';
 
 interface BagUploadDialogProps {
@@ -102,6 +103,26 @@ export function BagUploadDialog({ open, onOpenChange }: BagUploadDialogProps) {
             const response = await uploadBag(file, (progress) => {
                 setUploadProgress(progress);
             });
+
+            // Assign tags if any are selected
+            const selectedTagIds = [
+                selectedTags.device,
+                selectedTags.location,
+                selectedTags.sensor,
+            ].filter((id): id is number => id !== null);
+
+            if (selectedTagIds.length > 0) {
+                try {
+                    const bagId = parseInt(response.bagId, 10);
+                    if (!isNaN(bagId)) {
+                        await assignTagsToBag(bagId, selectedTagIds);
+                    }
+                } catch (tagError) {
+                    console.error('Failed to assign tags:', tagError);
+                    // Don't fail the upload if tag assignment fails
+                    toast.error('Bag uploaded but failed to assign tags');
+                }
+            }
 
             toast.success('Bag uploaded successfully! Processing started.');
 

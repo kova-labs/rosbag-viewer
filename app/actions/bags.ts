@@ -104,6 +104,33 @@ export async function getBagById(id: number): Promise<BagWithRelations | null> {
 }
 
 /**
+ * Assign tags to a bag
+ */
+export async function assignTagsToBag(bagId: number, tagIds: number[]): Promise<void> {
+    try {
+        if (tagIds.length === 0) {
+            return;
+        }
+
+        // Remove existing tags for this bag
+        await db.delete(bagTags).where(eq(bagTags.bagId, bagId));
+
+        // Insert new tags
+        if (tagIds.length > 0) {
+            await db.insert(bagTags).values(
+                tagIds.map((tagId) => ({
+                    bagId,
+                    tagId,
+                }))
+            );
+        }
+    } catch (error) {
+        console.error(`Error assigning tags to bag ${bagId}:`, error);
+        throw new Error(`Failed to assign tags to bag ${bagId}`);
+    }
+}
+
+/**
  * Filter bags by multiple tags
  */
 export async function getBagsByTags(tagIds: number[]): Promise<BagWithTags[]> {
