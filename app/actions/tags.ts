@@ -1,16 +1,25 @@
 'use server';
 
 import { db } from '@/lib/db';
-import { tags } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { tags, bagTags } from '@/lib/db/schema';
+import { eq, sql } from 'drizzle-orm';
 import type { InferSelectModel } from 'drizzle-orm';
 
 // Type definitions
 export type Tag = InferSelectModel<typeof tags>;
 
+export type TagWithCount = Tag & {
+    bagCount: number;
+};
+
 export type TagsByCategory = {
     category: string;
     tags: Tag[];
+};
+
+export type TagsByCategoryWithCounts = {
+    category: string;
+    tags: TagWithCount[];
 };
 
 /**
@@ -59,5 +68,59 @@ export async function getTagsByCategory(category: string): Promise<Tag[]> {
     } catch (error) {
         console.error(`Error fetching tags for category ${category}:`, error);
         throw new Error(`Failed to fetch tags for category ${category}`);
+    }
+}
+
+/**
+ * Fetch all tags grouped by category with bag counts
+ */
+export async function getAllTagsWithCounts(): Promise<TagsByCategoryWithCounts[]> {
+    try {
+        // Get all tags with their bag counts
+        const tagsWithCounts = await db
+            .select({
+                id: tags.id,
+                name: tags.name,
+                category: tags.category,
+                color: tags.color,
+                bagCount: sql<number>`count(${bagTags.bagId})::int`,
+            })
+            .from(tags)
+            .leftJoin(bagTags, eq(tags.id, bagTags.tagId))
+            .groupBy(tags.id, tags.name, tags.category, tags.color)
+            .orderBy(tags.category, tags.name);
+
+        // Group by category
+        const tagsByCategory = tagsWithCounts.reduce((acc, tag) => {
+            const existingCategory = acc.find((item) => item.category === tag.category);
+            if (existingCategory) {
+                existingCategory.tags.push({
+                    id: tag.id,
+                    name: tag.name,
+                    category: tag.category,
+                    color: tag.color,
+                    bagCount: tag.bagCount,
+                });
+            } else {
+                acc.push({
+                    category: tag.category,
+                    tags: [
+                        {
+                            id: tag.id,
+                            name: tag.name,
+                            category: tag.category,
+                            color: tag.color,
+                            bagCount: tag.bagCount,
+                        },
+                    ],
+                });
+            }
+            return acc;
+        }, [] as TagsByCategoryWithCounts[]);
+
+        return tagsByCategory;
+    } catch (error) {
+        console.error('Error fetching tags with counts:', error);
+        throw new Error('Failed to fetch tags with counts');
     }
 }
