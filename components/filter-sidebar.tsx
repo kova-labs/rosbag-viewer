@@ -241,7 +241,7 @@ export function FilterSidebar({
         <aside
             className={cn(
                 'w-[280px] border-r bg-background p-4',
-                'lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto',
+                'lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:overflow-y-auto',
                 className
             )}
         >

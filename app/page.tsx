@@ -82,24 +82,26 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold tracking-tight">ROS2 Bag Viewer</h1>
-            {/* Mobile filter button - rendered by FilterSidebar but positioned here */}
-            <div className="lg:hidden">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFilterSidebarOpen(!filterSidebarOpen)}
-              >
-                <Filter className="mr-2 h-4 w-4" />
-                Filters
-                {(filters.searchQuery.length > 0 || filters.selectedTagIds.length > 0) && (
-                  <span className="ml-2 h-2 w-2 rounded-full bg-primary" />
-                )}
-              </Button>
-            </div>
+        <div className="flex h-16 items-center justify-between px-4">
+          {/* Mobile filter button - left edge */}
+          <div className="lg:hidden">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setFilterSidebarOpen(!filterSidebarOpen)}
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Filters
+              {(filters.searchQuery.length > 0 || filters.selectedTagIds.length > 0) && (
+                <span className="ml-2 h-2 w-2 rounded-full bg-primary" />
+              )}
+            </Button>
           </div>
+          {/* Title - centered */}
+          <h1 className="absolute left-1/2 -translate-x-1/2 text-2xl font-bold tracking-tight">
+            ROS2 Bag Viewer
+          </h1>
+          {/* Import button - right edge */}
           <Button onClick={() => setUploadDialogOpen(true)}>
             <Upload className="mr-2 h-4 w-4" />
             Import Bag
@@ -113,7 +115,7 @@ export default function Home() {
           filters={filters}
           onFiltersChange={setFilters}
           isMobile={false}
-          className="hidden lg:block"
+          className="hidden lg:block lg:border-l-0"
         />
 
         {/* Filter Sidebar - Mobile Drawer */}
