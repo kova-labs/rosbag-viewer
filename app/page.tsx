@@ -82,7 +82,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-4">
+        <div className="relative flex h-16 items-center justify-between px-4">
           {/* Mobile filter button - left edge */}
           <div className="lg:hidden">
             <Button
@@ -101,8 +101,11 @@ export default function Home() {
           <h1 className="absolute left-1/2 -translate-x-1/2 text-2xl font-bold tracking-tight">
             ROS2 Bag Viewer
           </h1>
-          {/* Import button - right edge */}
-          <Button onClick={() => setUploadDialogOpen(true)}>
+          {/* Import button - top right corner */}
+          <Button 
+            onClick={() => setUploadDialogOpen(true)}
+            className="absolute top-4 right-4"
+          >
             <Upload className="mr-2 h-4 w-4" />
             Import Bag
           </Button>
